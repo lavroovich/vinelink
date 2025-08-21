@@ -91,7 +91,7 @@ from flask import Flask, send_file, url_for
 @app.route("/vinery/qr/<filename>")
 def pdf_qr(filename):
     # формируем полный URL к PDF
-    pdf_url = f"https://aviator.lavroovich.fun/vinery/{filename}"
+    pdf_url = f"https://vinelink.lavroovich.fun/vinery/{filename}"
     
     # генерим QR
     qr = qrcode.QRCode(
