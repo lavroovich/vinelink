@@ -2,6 +2,7 @@ from flask import Flask, render_template, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 import json
 import os
+import PIL
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///vines.db"
