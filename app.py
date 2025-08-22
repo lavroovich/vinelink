@@ -2,7 +2,6 @@ from flask import Flask, render_template, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 import json
 import os
-import PIL
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///vines.db"
@@ -46,11 +45,6 @@ def catalog():
     
     return render_template("catalog.html", vines=vines_list)
 
-# ----- Раздача PDF -----
-@app.route("/vinery/<filename>")
-def pdfs(filename):
-    return send_from_directory("pdfs", filename)
-
 # ----- Тестовый роут для загрузки -----
 @app.route("/dev-only/upload-test-vines")
 def upload_test_vines():
@@ -85,14 +79,14 @@ import qrcode
 from io import BytesIO
 from flask import Flask, send_file, url_for
 
+# ... твой предыдущий код выше ...
+
 # ----- QR-код роут -----
 @app.route("/vinery/qr/<filename>")
 def pdf_qr(filename):
-    if filename == "catalog-page":
-        pdf_url = "https://vinelink.lavroovich.fun/"
-    else:
-        pdf_url = f"https://vinelink.lavroovich.fun/vinery/{filename}"
-
+    # формируем полный URL к PDF
+    pdf_url = f"https://aviator.lavroovich.fun/vinery/{filename}"
+    
     # генерим QR
     qr = qrcode.QRCode(
         version=1,
@@ -105,10 +99,20 @@ def pdf_qr(filename):
 
     img = qr.make_image(fill_color="black", back_color="white")
 
+    # отдаем как PNG прямо в браузер
     buf = BytesIO()
     img.save(buf, format="PNG")
     buf.seek(0)
     return send_file(buf, mimetype="image/png")
+
+@app.route("/vinery/<filename>")
+def pdf_view(filename):
+    return render_template("viewer.html", filename=filename)
+
+# даём пдф
+@app.route("/vinery/pdfs/<filename>")
+def pdfs(filename):
+    return send_from_directory("pdfs", filename)
 
 # ----- Инициализация -----
 with app.app_context():

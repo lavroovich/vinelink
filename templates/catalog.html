@@ -156,7 +156,8 @@ function renderVines(vines){
             <div class="main-info">${countryMap[v.country]||v.country} • ${colorMap[v.color]||v.color} • ${sugar}</div>
             <div class="extra-info">Регион: ${v.region||"—"} | Сорт винограда: ${grapes}</div>`;
         list.appendChild(card); cards.push(card);
-        card.addEventListener('click',()=>window.open('/vinery/qr/'+v.pdf_file,'_blank'));
+        // 👉 теперь ведём в просмотрщик
+        card.addEventListener('click',()=>window.open('/vinery/view/'+v.pdf_file,'_blank'));
     });
     requestAnimationFrame(()=>animateCards(cards));
 }
@@ -219,7 +220,8 @@ function renderSortedVines(vines,criterion){
                     <div class="main-info">${countryMap[v.country]||v.country} • ${colorMap[v.color]||v.color} • ${sugar}</div>
                     <div class="extra-info">Регион: ${v.region||"—"} | Сорт винограда: ${grapes}</div>`;
                 sortedList.appendChild(card);
-                card.addEventListener('click',()=>window.open('/vinery/qr/'+v.pdf_file,'_blank'));
+                // 👉 тоже ведём в просмотрщик
+                card.addEventListener('click',()=>window.open('/vinery/'+v.pdf_file,'_blank'));
                 requestAnimationFrame(()=>card.classList.add('show'));
             });
         });
