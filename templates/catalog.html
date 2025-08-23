@@ -90,7 +90,7 @@ h1 { font-size:1.6rem; text-align:center; margin-bottom:15px; }
         <select id="filter-country" multiple></select>
     </div>
     <div class="filter-box" id="filter-color-box">
-        <label>Цвета | <span id="count-color">0</span> штук</label>
+        <label>Цвет | <span id="count-color">0</span> штук</label>
         <select id="filter-color" multiple></select>
     </div>
     <div class="filter-box">
@@ -157,7 +157,7 @@ function renderVines(vines){
             <div class="extra-info">Регион: ${v.region||"—"} | Сорт винограда: ${grapes}</div>`;
         list.appendChild(card); cards.push(card);
         // 👉 теперь ведём в просмотрщик
-        card.addEventListener('click',()=>window.open('/vinery/view/'+v.pdf_file,'_blank'));
+        card.addEventListener('click',()=>window.open('/vinery/qr/'+v.pdf_file,'_blank'));
     });
     requestAnimationFrame(()=>animateCards(cards));
 }
