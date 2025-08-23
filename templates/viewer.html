@@ -6,37 +6,22 @@
 <title>PDF — WineLink</title>
 <link href="https://fonts.googleapis.com/css?family=Alegreya+SC:500,700&display=swap" rel="stylesheet">
 <style>
-body { margin:0; text-align:center; background:#faf7f0; font-family:'Alegreya SC', sans-serif; }
-canvas { width:100%; max-width:100%; border:1px solid #ccc; display:block; margin:0 auto; image-rendering:pixelated; }
-button { margin:10px; padding:10px 20px; cursor:pointer; font-family:'Alegreya SC', sans-serif; }
+body { margin:0; background:#faf7f0; font-family:'Alegreya SC', sans-serif; display:flex; flex-direction:column; height:100vh; }
+header { width:100%; text-align:center; padding:10px 0; background:#fff; border-bottom:1px solid #ddd; position:sticky; top:0; z-index:10; }
+header img { max-width:150px; }
+main { flex:1; display:flex; flex-direction:column; }
+iframe { flex:1; width:100%; border:none; }
+button { margin:12px auto; padding:10px 20px; cursor:pointer; font-family:'Alegreya SC', sans-serif; border-radius:8px; border:1px solid #aaa; background:#fff; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+button:hover { background:#eee; }
 </style>
 </head>
 <body>
-<canvas id="pdf-canvas"></canvas>
-<br>
-<a href="/"><button>Винная Карта</button></a>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script>
-const url = "{{ url_for('pdfs', filename=filename) }}";
-const canvas = document.getElementById('pdf-canvas');
-const ctx = canvas.getContext('2d');
-
-// Супер быстрый рендер одной страницы
-pdfjsLib.getDocument({url, nativeImageDecoderSupport:'prefer-embedded'}).promise.then(pdf => {
-    pdf.getPage(1).then(page => {
-        const viewport = page.getViewport({ scale: 0.6 }); // минимальный масштаб
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-
-        page.render({ canvasContext: ctx, viewport }).promise.then(() => {
-            // CSS увеличиваем визуально
-            canvas.style.transform = 'scale(1.8)';
-            canvas.style.transformOrigin = 'top left';
-            console.log('PDF загружен мгновенно 🚀');
-        });
-    });
-});
-</script>
+<header>
+    <img src="/static/logo.jpg" alt="VineLink">
+</header>
+<main>
+    <iframe src="{{ url_for('pdfs', filename=filename) }}#view=FitH" allow="fullscreen"></iframe>
+    <a href="/"><button>В Винную Карту</button></a>
+</main>
 </body>
 </html>
