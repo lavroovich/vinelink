@@ -32,7 +32,7 @@ iframe { flex:1; width:100%; border:none; }
 <body>
 <header>
     <img src="/static/logo.jpg" alt="VineLink">
-    <a href="/"><button>🍷 Винная Карта</button></a>
+    <a href="/"><button>Винная Карта</button></a>
 </header>
 <main>
     <iframe src="{{ url_for('pdfs', filename=filename) }}#view=FitH" allow="fullscreen"></iframe>
