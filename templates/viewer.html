@@ -3,125 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Просмотр PDF — WineLink</title>
+<title>PDF — WineLink</title>
 <link href="https://fonts.googleapis.com/css?family=Alegreya+SC:500,700&display=swap" rel="stylesheet">
 <style>
-body {
-    margin:0; padding:0;
-    font-family:'Alegreya SC', sans-serif;
-    background:#faf7f0;
-    color:#333;
-    display:flex;
-    flex-direction:column;
-    height:100dvh;
-}
-header {
-    width:100%;
-    text-align:center;
-    padding:10px 0;
-    background:#fff;
-    border-bottom:1px solid #ddd;
-}
-main {
-    flex:1 1 auto;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding:10px;
-    gap:10px;
-}
-canvas {
-    width:100%;
-    max-width:900px;
-    border:1px solid #ccc;
-    background:#fff;
-}
-button {
-    background:#2980b9;
-    color:#fff;
-    border:none;
-    padding:12px 20px;
-    border-radius:8px;
-    font-size:1rem;
-    cursor:pointer;
-    transition:background 0.3s;
-}
-button:hover { background:#1f6691; }
-.controls {
-    display:flex;
-    gap:10px;
-    margin-bottom:10px;
-}
+body { margin:0; text-align:center; background:#faf7f0; font-family:'Alegreya SC', sans-serif; }
+canvas { max-width:100%; border:1px solid #ccc; }
+button { margin:10px; padding:10px 20px; cursor:pointer; font-family:'Alegreya SC', sans-serif; }
 </style>
 </head>
 <body>
-<header>
-    <img src="/static/logo.jpg" alt="WineLink" style="max-width:150px;">
-</header>
-<main>
-    <div class="controls">
-        <button id="prev">← Предыдущая</button>
-        <span>Страница: <span id="page-num">1</span> / <span id="page-count">1</span></span>
-        <button id="next">Следующая →</button>
-    </div>
-    <canvas id="pdf-canvas"></canvas>
-    <a href="/"><button>Винная Карта</button></a>
-</main>
+<canvas id="pdf-canvas"></canvas>
+<br>
+<a href="/"><button>Винная Карта</button></a>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
 const url = "{{ url_for('pdfs', filename=filename) }}";
-let pdfDoc = null, pageNum = 1, pageRendering = false, pageNumPending = null;
-const scale = 1.2;
 const canvas = document.getElementById('pdf-canvas');
 const ctx = canvas.getContext('2d');
 
-function renderPage(num) {
-    pageRendering = true;
-    pdfDoc.getPage(num).then(page => {
-        const viewport = page.getViewport({scale: scale});
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-        const renderContext = {canvasContext: ctx, viewport: viewport};
-        const renderTask = page.render(renderContext);
-        renderTask.promise.then(() => {
-            pageRendering = false;
-            document.getElementById('page-num').textContent = num;
-            if (pageNumPending !== null) {
-                renderPage(pageNumPending);
-                pageNumPending = null;
-            }
-        });
-    });
-}
-
-function queueRenderPage(num) {
-    if (pageRendering) {
-        pageNumPending = num;
-    } else {
-        renderPage(num);
-    }
-}
-
-function onPrevPage() {
-    if (pageNum <= 1) return;
-    pageNum--;
-    queueRenderPage(pageNum);
-}
-
-function onNextPage() {
-    if (pageNum >= pdfDoc.numPages) return;
-    pageNum++;
-    queueRenderPage(pageNum);
-}
-
-document.getElementById('prev').addEventListener('click', onPrevPage);
-document.getElementById('next').addEventListener('click', onNextPage);
-
 pdfjsLib.getDocument(url).promise.then(pdf => {
-    pdfDoc = pdf;
-    document.getElementById('page-count').textContent = pdf.numPages;
-    renderPage(pageNum);
+    pdf.getPage(1).then(page => {
+        const viewport = page.getViewport({scale:1.2});
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        page.render({canvasContext:ctx, viewport:viewport});
+    });
 });
 </script>
 </body>
