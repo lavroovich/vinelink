@@ -7,21 +7,34 @@
 <link href="https://fonts.googleapis.com/css?family=Alegreya+SC:500,700&display=swap" rel="stylesheet">
 <style>
 body { margin:0; background:#faf7f0; font-family:'Alegreya SC', sans-serif; display:flex; flex-direction:column; height:100vh; }
-header { width:100%; text-align:center; padding:10px 0; background:#fff; border-bottom:1px solid #ddd; position:sticky; top:0; z-index:10; }
+header { width:100%; text-align:center; padding:15px 0; background:#fff; border-bottom:1px solid #ddd; position:sticky; top:0; z-index:20; display:flex; flex-direction:column; align-items:center; gap:10px; }
 header img { max-width:150px; }
+header a button {
+    padding:10px 24px;
+    font-size:1rem;
+    font-weight:bold;
+    cursor:pointer;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg, #f7d794, #f5cd79);
+    box-shadow:0 4px 10px rgba(0,0,0,0.15);
+    transition:transform 0.2s ease, box-shadow 0.2s ease;
+}
+header a button:hover {
+    transform:scale(1.05);
+    box-shadow:0 6px 14px rgba(0,0,0,0.2);
+}
 main { flex:1; display:flex; flex-direction:column; }
 iframe { flex:1; width:100%; border:none; }
-button { margin:12px auto; padding:10px 20px; cursor:pointer; font-family:'Alegreya SC', sans-serif; border-radius:8px; border:1px solid #aaa; background:#fff; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
-button:hover { background:#eee; }
 </style>
 </head>
 <body>
 <header>
     <img src="/static/logo.jpg" alt="VineLink">
+    <a href="/"><button>🍷 Винная Карта</button></a>
 </header>
 <main>
     <iframe src="{{ url_for('pdfs', filename=filename) }}#view=FitH" allow="fullscreen"></iframe>
-    <a href="/"><button>В Винную Карту</button></a>
 </main>
 </body>
 </html>
