@@ -115,7 +115,7 @@ def pdf_view(filename):
 # даём пдф
 @app.route("/vinery/pdfs/<filename>")
 def pdfs(filename):
-    return send_from_directory("pdfs", filename)
+    return send_from_directory("pdfs", filename, mimetype="application/pdf")
 
 # ----- Инициализация -----
 with app.app_context():
