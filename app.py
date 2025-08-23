@@ -84,9 +84,12 @@ from flask import Flask, send_file, url_for
 # ----- QR-код роут -----
 @app.route("/vinery/qr/<filename>")
 def pdf_qr(filename):
-    # формируем полный URL к PDF
-    pdf_url = f"https://aviator.lavroovich.fun/vinery/{filename}"
-    
+    # если filename = "catalog-page", то ссылка будет на главную
+    if filename == "catalog-page":
+        pdf_url = "https://vinelink.lavroovich.fun/"
+    else:
+        pdf_url = f"https://vinelink.lavroovich.fun/vinery/{filename}"
+
     # генерим QR
     qr = qrcode.QRCode(
         version=1,
@@ -99,7 +102,7 @@ def pdf_qr(filename):
 
     img = qr.make_image(fill_color="black", back_color="white")
 
-    # отдаем как PNG прямо в браузер
+    # отдаём как PNG прямо в браузер
     buf = BytesIO()
     img.save(buf, format="PNG")
     buf.seek(0)
