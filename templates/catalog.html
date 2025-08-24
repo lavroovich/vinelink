@@ -170,7 +170,7 @@ function renderVines(vines){
             <div class="extra-info">Регион: ${v.region||"—"} | Сорт винограда: ${grapes}</div>`;
         list.appendChild(card); cards.push(card);
         // 👉 теперь ведём в просмотрщик
-        card.addEventListener('click',()=>window.open('/vinery/qr/'+v.pdf_file,'_blank'));
+        card.addEventListener('click',()=>window.open('/vinery/'+v.pdf_file,'_blank'));
     });
     requestAnimationFrame(()=>animateCards(cards));
 }
