@@ -122,11 +122,17 @@ h1 {
 <div class="wine-list"></div>
 <div class="wine-list-sorted"></div>
 
-<p>версия сайта: release 1.0b</p>
+<p>версия сайта: release 1.0с</p>
 <p>winelink сделан с душой <span class="bold">Lavroovich-ем</span></p>
 
+
 <script>
-const countryMap = { russia:"🇷🇺 Россия", usa:"🇺🇸 США", ukraine:"🇺🇦 Украина", france:"🇫🇷 Франция", italy:"🇮🇹 Италия", spain:"🇪🇸 Испания", germany:"🇩🇪 Германия", new_zealand:"🇳🇿 Новая Зеландия", georgia:"🇬🇪 Грузия", brazil:"🇧🇷 Бразилия", australia:"🇦🇺 Австралия", aurstria:"🇦🇹 Австрия", argentina:"🇦🇷 Аргентина", south_africa:"🇿🇦 Южная Африка", serbia: "🇷🇸 Сербия" };
+const countryMap = { 
+    russia:"🇷🇺 Россия", usa:"🇺🇸 США", ukraine:"🇺🇦 Украина", france:"🇫🇷 Франция", italy:"🇮🇹 Италия", 
+    spain:"🇪🇸 Испания", germany:"🇩🇪 Германия", new_zealand:"🇳🇿 Новая Зеландия", georgia:"🇬🇪 Грузия", 
+    brazil:"🇧🇷 Бразилия", australia:"🇦🇺 Австралия", aurstria:"🇦🇹 Австрия", argentina:"🇦🇷 Аргентина", 
+    south_africa:"🇿🇦 Южная Африка", serbia: "🇷🇸 Сербия" 
+};
 const colorMap = { red:"Красное", white:"Белое", pink:"Розовое" };
 const sugarMap = { dry:"Сухое", semidry:"Полусухое", brut: "Брют" , sweet:"Сладкое" };
 
@@ -142,9 +148,32 @@ const selects = {
 };
 let filteredVines = allVines.slice();
 
-function getUniqueValues(vines, field){ if(field==="grape") return [...new Set(vines.flatMap(v=>v.grape||[]))]; return [...new Set(vines.map(v=>v[field]))]; }
-function getSelectedValues(select){ return Array.from(select.selectedOptions).map(o=>o.value); }
-function populateSelect(select, values, map){ const current=getSelectedValues(select); select.innerHTML=''; values.forEach(val=>{ const option=document.createElement('option'); option.value=val; option.textContent=map?map[val]||val:val; if(current.includes(val)) option.selected=true; select.appendChild(option); }); }
+function getUniqueValues(vines, field){ 
+    if(field==="grape") return [...new Set(vines.flatMap(v=>v.grape||[]))]; 
+    return [...new Set(vines.map(v=>v[field]))]; 
+}
+function getSelectedValues(select){ 
+    return Array.from(select.selectedOptions).map(o=>o.value); 
+}
+
+// --- фикс: сортировка значений по алфавиту
+function populateSelect(select, values, map){ 
+    const current = getSelectedValues(select);
+    select.innerHTML = '';
+    values.sort((a,b)=>{
+        const textA = (map ? map[a] || a : a).toString().toLowerCase();
+        const textB = (map ? map[b] || b : b).toString().toLowerCase();
+        return textA.localeCompare(textB, 'ru');
+    });
+    values.forEach(val=>{
+        const option=document.createElement('option');
+        option.value=val;
+        option.textContent=map?map[val]||val:val;
+        if(current.includes(val)) option.selected=true;
+        select.appendChild(option);
+    });
+}
+
 function animateCards(cards){ cards.forEach((c,i)=>setTimeout(()=>c.classList.add('show'), i*50)); }
 
 function renderVines(vines){
