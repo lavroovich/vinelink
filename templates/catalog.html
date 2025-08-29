@@ -206,20 +206,25 @@ function filterVines(){
     const sugars = getSelectedValues(selects.sugar);
     const sparklingChecked = document.querySelector('#filter-sparkling').checked;
 
-    const allowedRegions = allVines.filter(v=>countries.length===0||countries.includes(v.country)).map(v=>v.region).filter(r=>r);
+    // используем уже фильтрованные вина с учётом sparkling
+    const allowedRegions = allVines
+        .filter(v => (!sparklingChecked || v.sparkling==="yes") &&
+                     (countries.length===0 || countries.includes(v.country)))
+        .map(v=>v.region)
+        .filter(r=>r);
     regions = regions.filter(r=>allowedRegions.includes(r));
 
     filteredVines = allVines.filter(v=>
-        (!name||v.name.toLowerCase().includes(name)) &&
-        (countries.length===0||countries.includes(v.country)) &&
-        (colors.length===0||colors.includes(v.color)) &&
-        (regions.length===0||regions.includes(v.region)) &&
-        (grapes.length===0||(v.grape||[]).some(g=>grapes.includes(g))) &&
-        (sugars.length===0||sugars.includes(v.sugar)) &&
-        (!sparklingChecked || v.sparkling==="yes")  // <-- фильтр игристого
+        (!name || v.name.toLowerCase().includes(name)) &&
+        (countries.length===0 || countries.includes(v.country)) &&
+        (colors.length===0 || colors.includes(v.color)) &&
+        (regions.length===0 || regions.includes(v.region)) &&
+        (grapes.length===0 || (v.grape||[]).some(g=>grapes.includes(g))) &&
+        (sugars.length===0 || sugars.includes(v.sugar)) &&
+        (!sparklingChecked || v.sparkling==="yes") // фильтр игристого
     );
 
-    populateSelect(selects.region,[...new Set(allowedRegions)]);
+    populateSelect(selects.region, [...new Set(allowedRegions)]);
     renderVines(filteredVines);
     updateSorted();
 }
