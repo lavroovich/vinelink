@@ -14,6 +14,7 @@ class Vine(database.Model):
     id = database.Column(database.Integer, primary_key=True)
     name = database.Column(database.String(100), nullable=False)
     color = database.Column(database.String(50), nullable=False)
+    sparkling = database.Column(database.String(50), nullable=False, default="no")
     country = database.Column(database.String(100), nullable=False)
     region = database.Column(database.String(100), nullable=True)
     grape = database.Column(database.String(200), nullable=True)  # JSON-строка
