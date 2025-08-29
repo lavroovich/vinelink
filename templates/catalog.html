@@ -9,16 +9,20 @@
 body { margin:0; padding:0; min-height:100vh; font-family:'Alegreya SC', sans-serif; background:#faf7f0; color:#333; display:flex; flex-direction:column; }
 header { width:100%; text-align:center; padding:10px 0; background:#fff; border-bottom:1px solid #ddd; position:sticky; top:0; z-index:10; }
 main { flex:1; padding:15px; }
-h1 { font-size:1.6rem; text-align:center; margin-bottom:15px; }
+h1 { font-size:1.6rem; text-align:center; margin-bottom:15px; background: #6f0a0a; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 
 .filters { display:flex; gap:10px; padding:10px; overflow-x:auto; background:#fff; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.08); margin-bottom:15px; scrollbar-width:none; }
 .filters::-webkit-scrollbar { display:none; }
-.filter-box { flex:0 0 auto; min-width:140px; display:flex; flex-direction:column; background:#fafafa; padding:8px; border-radius:8px; border:1px solid #ddd; transition:background 0.4s ease, border-color 0.4s ease; }
-.filter-box label { font-size:0.75rem; font-weight:bold; margin-bottom:4px; }
-.filter-box select, .filter-box input { padding:6px; font-size:0.9rem; border-radius:6px; border:1px solid #ccc; background:#fff; font-family:inherit; appearance:none; }
+.filter-box { flex:0 0 auto; min-width:140px; display:flex; flex-direction:column; background:#fafafa; padding:8px; border-radius:8px; border:1px solid #ddd; transition:background 0.4s ease, border-color 0.4s ease; text-align:center; }
+.filter-box label { font-size:0.75rem; font-weight:bold; margin-bottom:4px; display:flex; flex-direction:column; align-items:center; }
+.filter-box select, .filter-box input[type="text"] { padding:6px; font-size:0.9rem; border-radius:6px; border:1px solid #ccc; background:#fff; font-family:inherit; appearance:none; width:100%; box-sizing:border-box; }
+
 .filter-box.red-highlight { background:#ffd6d6; border-color:#ff8080; }
 .filter-box.white-highlight { background:#ffffcc; border-color:#ffff80; }
 .filter-box.pink-highlight { background:#ffd6e6; border-color:#b66585; }
+
+/* для чекбокса игристого */
+.filter-box input[type="checkbox"] { margin-top:6px; transform:scale(1.2); cursor:pointer; }
 
 .wine-list-sorted .group-title {
     font-weight:700;
@@ -48,17 +52,20 @@ h1 { font-size:1.6rem; text-align:center; margin-bottom:15px; }
     padding:10px 14px;
     box-shadow:0 4px 12px rgba(0,0,0,0.08);
     cursor:pointer;
-    transition:transform 0.25s ease, box-shadow 0.25s ease, opacity 0.4s ease;
+    transition:transform 0.25s ease, box-shadow 0.25s ease, opacity 0.4s ease, border 0.25s ease;
     opacity:0;
     transform:translateY(15px) scale(0.98);
     display:flex;
     flex-direction:column;
     gap:6px;
+    border:2px solid transparent;
 }
 .wine-card.show { opacity:1; transform:translateY(0) scale(1); }
 .wine-card:hover { transform:scale(1.04); box-shadow:0 6px 18px rgba(0,0,0,0.12); }
 
-/* --- маленькие карточки подкатегорий --- */
+/* выделяем игристое бордюром */
+.wine-card.sparkling { border-color:#ffd700; }
+
 .wine-card.sub {
     padding:8px 10px;
     font-size:0.85rem;
@@ -71,17 +78,6 @@ h1 { font-size:1.6rem; text-align:center; margin-bottom:15px; }
 .wine-card .main-info { font-size:0.9rem; color:#333; font-weight:500; }
 .wine-card .extra-info { font-size:0.8rem; color:#777; }
 .bold { font-weight:bold; }
-
-h1 {
-    font-size:1.6rem;
-    text-align:center;
-    margin-bottom:15px;
-
-    background: #6f0a0a;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
 </style>
 </head>
 <body>
@@ -89,7 +85,7 @@ h1 {
     <img src="static/logo.jpg" alt="VineLink" style="max-width:150px;">
 </header>
 <main>
-<h1>Винная Карта</h1>
+<h1>Винная Карта (Бета-Версия)</h1>
 
 <div class="filters">
     <div class="filter-box">
@@ -116,13 +112,20 @@ h1 {
         <label>Сорт винограда</label>
         <select id="filter-grape" multiple></select>
     </div>
+    <!-- Новый фильтр -->
+    <div class="filter-box">
+        <label>
+            <input type="checkbox" id="filter-sparkling">
+            Игристое
+        </label>
+    </div>
 </div>
 
 <p>Нажимайте на карточки, чтобы узнать больше &darr;</p>
 <div class="wine-list"></div>
 <div class="wine-list-sorted"></div>
 
-<p>версия сайта: release 1.0с</p>
+<p>версия сайта: beta 1.1</p>
 <p>winelink сделан с душой <span class="bold">Lavroovich-ем</span></p>
 
 
@@ -156,7 +159,6 @@ function getSelectedValues(select){
     return Array.from(select.selectedOptions).map(o=>o.value); 
 }
 
-// --- фикс: сортировка значений по алфавиту
 function populateSelect(select, values, map){ 
     const current = getSelectedValues(select);
     select.innerHTML = '';
@@ -202,6 +204,7 @@ function filterVines(){
     let regions = getSelectedValues(selects.region);
     const grapes = getSelectedValues(selects.grape);
     const sugars = getSelectedValues(selects.sugar);
+    const sparklingChecked = document.querySelector('#filter-sparkling').checked;
 
     const allowedRegions = allVines.filter(v=>countries.length===0||countries.includes(v.country)).map(v=>v.region).filter(r=>r);
     regions = regions.filter(r=>allowedRegions.includes(r));
@@ -212,7 +215,8 @@ function filterVines(){
         (colors.length===0||colors.includes(v.color)) &&
         (regions.length===0||regions.includes(v.region)) &&
         (grapes.length===0||(v.grape||[]).some(g=>grapes.includes(g))) &&
-        (sugars.length===0||sugars.includes(v.sugar))
+        (sugars.length===0||sugars.includes(v.sugar)) &&
+        (!sparklingChecked || v.sparkling==="yes")  // <-- фильтр игристого
     );
 
     populateSelect(selects.region,[...new Set(allowedRegions)]);
@@ -281,7 +285,12 @@ populateSelect(selects.sugar,getUniqueValues(allVines,'sugar'),sugarMap);
 renderVines(allVines);
 updateSorted();
 
-document.querySelectorAll('.filters input, .filters select').forEach(el=>{el.addEventListener('input',()=>{filterVines(); updateColorHighlight();});});
+document.querySelectorAll('.filters input, .filters select').forEach(el=>{
+    el.addEventListener('input',()=>{
+        filterVines(); 
+        updateColorHighlight();
+    });
+});
 </script>
 </main>
 </body>
