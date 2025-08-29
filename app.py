@@ -34,15 +34,16 @@ def catalog():
             grapes = [v.grape] if v.grape else []
 
         vines_list.append({
-            "id": v.id,
-            "name": v.name,
-            "color": v.color,
-            "country": v.country,
-            "region": v.region,
-            "grape": grapes,   # список сортов!
-            "sugar": v.sugar,
-            "pdf_file": v.pdf_file
-        })
+    "id": v.id,
+    "name": v.name,
+    "color": v.color,
+    "country": v.country,
+    "region": v.region,
+    "grape": grapes,
+    "sugar": v.sugar,
+    "pdf_file": v.pdf_file,
+    "sparkling": v.sparkling
+})
     
     return render_template("catalog.html", vines=vines_list)
 
