@@ -205,9 +205,11 @@ function renderVines(vines){
         card.className='wine-card';
         if(v.sparkling==="yes") card.classList.add('sparkling'); // выделяем игристое
         card.dataset.pdf=v.pdf_file;
-        card.innerHTML=<h3>${v.name}</h3>
+        card.innerHTML = `
+            <h3>${v.name}</h3>
             <div class="main-info">${countryMap[v.country]||v.country} • ${colorMap[v.color]||v.color} • ${sugar}</div>
-            <div class="extra-info">Регион: ${v.region||"—"} | Сорт винограда: ${grapes}</div>;
+            <div class="extra-info">Регион: ${v.region||"—"} | Сорт винограда: ${grapes}</div>
+        `;
         list.appendChild(card); 
         cards.push(card);
         card.addEventListener('click',()=>window.open('/vinery/'+v.pdf_file,'_blank'));
@@ -283,9 +285,11 @@ function renderSortedVines(vines,criterion){
                 const card=document.createElement('div'); 
                 card.className='wine-card sub';
                 if(v.sparkling==="yes") card.classList.add('sparkling'); // игристое
-                card.innerHTML=<h3>${v.name}</h3>
+                card.innerHTML = `
+                    <h3>${v.name}</h3>
                     <div class="main-info">${countryMap[v.country]||v.country} • ${colorMap[v.color]||v.color} • ${sugar}</div>
-                    <div class="extra-info">Регион: ${v.region||"—"} | Сорт винограда: ${grapes}</div>;
+                    <div class="extra-info">Регион: ${v.region||"—"} | Сорт винограда: ${grapes}</div>
+                `;
                 sortedList.appendChild(card);
                 card.addEventListener('click',()=>window.open('/vinery/'+v.pdf_file,'_blank'));
                 requestAnimationFrame(()=>card.classList.add('show'));
